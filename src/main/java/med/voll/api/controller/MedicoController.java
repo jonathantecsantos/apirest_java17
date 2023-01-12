@@ -28,7 +28,7 @@ public class MedicoController {
     //pageableDefault configura o padrao para paginacao
     @GetMapping
     public Page<DadosListagemMedico> listar(@PageableDefault(size = 10, page = 0, sort = {"nome"}) Pageable paginacao){
-        return repository.findAll(paginacao).map(DadosListagemMedico::new);
+        return repository.findAllByAtivoTrue(paginacao).map(DadosListagemMedico::new);
     }
     @Transactional
     @PutMapping
@@ -39,7 +39,9 @@ public class MedicoController {
     @Transactional
     @DeleteMapping("/{id}")
     public void excluir(@PathVariable Long id){
-        repository.deleteById(id);
+        //Na funcionalidade de Delete o registro nao sera apagado (definido pelo cliente). Setaremos o valor de "ativo" para false.
+        var medico = repository.getReferenceById(id);
+        medico.excluir();
     }
 
 
